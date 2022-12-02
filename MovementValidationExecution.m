@@ -24,6 +24,58 @@ inputs:
                top-right corner.
 %}
 
+%Check to make sure angle is good
+valid = false;
+while valid == false
+    if angle < 0
+        angle = angle + 2*pi;
+    elseif angle > 2*pi
+        angle = angle - 2*pi;
+    else
+        valid = true;
+    end
+end
+
+
+% find new location
+if (angle <= pi/8) || (angle > 15*pi/8)
+    x_new = x+speed;
+    y_new = y;
+elseif (angle <= 3*pi/8) && (angle > pi/8)
+    x_new = x+speed;
+    y_new = y+speed;
+elseif (angle <= 5*pi/8) && (angle > 3*pi/8)
+    x_new = x;
+    y_new = y+speed;
+elseif (angle <= 7*pi/8) && (angle > 5*pi/8)
+    x_new = x-speed;
+    y_new = y+speed;
+elseif (angle <= 9*pi/8) && (angle > 7*pi/8)
+    x_new = x-speed;
+    y_new = y;
+elseif (angle <= 11*pi/8) && (angle > 9*pi/8)
+    x_new = x-speed;
+    y_new = y-speed;
+elseif (angle <= 13*pi/8) && (angle > 11*pi/8)
+    x_new = x;
+    y_new = y-speed;
+elseif (angle <= 15*pi/8) && (angle > 13*pi/8)
+    x_new = x+speed;
+    y_new = y-speed;
+else
+    disp('rip');
+end
+
+% Make sure new location is valid
+if (x_new < allowed(1)) || (y_new < allowed(2)) || (x_new > allowed(3)) || (y_new > allowed(4))
+    x_new = x;
+    y_new = y;
+    angle = angle+pi;
+else
+    angle = computeNewAngle();
+end
+return;
+
 % First, compute the new location that we are going to validate
 
 % Check whether the new location is within the map (allowed)

@@ -18,6 +18,14 @@ concentration: an N-by-1 array to indicate the concentration of the
         decay: the decay amount of pheromone after a time step
 %}
 
+for i=1:length(concentration)
+    concentration(i) = concentration(i)-decay;
+    if concentration(i) < 0
+        pheromones(i,:) = [];
+    end
+end
+concentration(concentration < 0) = [];
+
 % Compute the new concentration (with decay)
 
 % Eliminate points of pheromone that the corresponding concentration are

@@ -33,6 +33,13 @@ inputs:
 
 % Compute the pheromone positions relative to the ant and the corresponding
 % distances (distance between a point of pheromone and the ant)
+relative_pheromones = pheromones(:,1) - x; 
+relative_pheromones = pheromones(:,2) - y;
+distances = zeros(1,length(pheromones));
+for i = 1:length(relative_pheromones)
+    distance = sqrt(( relative_pheromones(i,1) )^2 + ( relative_pheromones(i,2) )^2);
+    distances(1,i) = distance;
+end
 
 % Compute the pheromone angles with respect to the x axis in the range of 
 % [0, 2*pi]
@@ -43,6 +50,11 @@ inputs:
 %         angles between 0 and 2pi. To do so, use the mod() function with 
 %         2pi as the divisor to make sure all the angles would be within 
 %         the range.
+relative_angles = zeros(1, length(relative_pheromones));
+for i = 1:length(relative_pheromones)
+    relative_angles(i,1) = atan2(relative_pheromones(i,2)/relative_pheromones(i,1)); 
+end
+relative_angles = atan(relative_angles, 2*pi);
 
 % Filter out the points of pheromone that are not withing the region that 
 % the ant can sense. A effective point of pheromone for the ant is:
@@ -50,6 +62,12 @@ inputs:
 %    and the orientation of the ant is within pi/2.
 % 2. the distance between the point of pheromone and the ant is smaller 
 %    than r_smell.
+for i = 1:length(relative_angles)
+    if distances > r_smell || relative_angles(i,1) <= ant_angle-(pi/2) || relative_angles(i,1) >= ant_angle-(pi/2)
+        % FILTER OUT HERE, HOW DO WE DO THIS?
+    end
+
+end
 
 % If there is no effective pheromone, the angle of the ant is changed with 
 % only the normal random number controlled by sigma_2. This function then 

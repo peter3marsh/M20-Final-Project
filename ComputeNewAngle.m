@@ -31,6 +31,7 @@ inputs:
 % HINT: To get a normal random number, use normrnd(mu, sigma).
 if isempty(pheromones)
     angle = normrnd(0,sigma_2);
+    return
 end
 
 % Compute the pheromone positions relative to the ant and the corresponding
@@ -56,7 +57,7 @@ relative_angles = zeros(1, length(relative_pheromones));
 for i = 1:length(relative_pheromones)
     relative_angles(i,1) = atan2(relative_pheromones(i,2)/relative_pheromones(i,1)); 
 end
-relative_angles = atan(relative_angles, 2*pi);
+relative_angles = mod(relative_angles, 2*pi);
 
 % Filter out the points of pheromone that are not withing the region that 
 % the ant can sense. A effective point of pheromone for the ant is:
@@ -65,8 +66,8 @@ relative_angles = atan(relative_angles, 2*pi);
 % 2. the distance between the point of pheromone and the ant is smaller 
 %    than r_smell.
 for i = 1:length(relative_angles)
-    if distances > r_smell || relative_angles(i,1) <= ant_angle-(pi/2) || relative_angles(i,1) >= ant_angle+(pi/2)
-        relative_angles(i,1) = ant_angle + pi;
+    if distances(1,i) > r_smell || relative_angles(i,1) <= ant_angle+(pi/2) || relative_angles(i,1) >= ant_angle-(pi/2)
+        relative_angles(i,1) = [];
     end
 end
 
@@ -75,6 +76,10 @@ end
 % terminates and returns the angle.
 % NOTE: The procedure is the same as the one when there is no pheromone on 
 %       the map
+if isempty(relative_angles)
+    angle = normrnd(0,sigma_2);
+    return
+end
 
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
 % Compute the mean value of all the effective, relative pheromone positions 

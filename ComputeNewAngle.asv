@@ -29,8 +29,8 @@ inputs:
 % NOTE: This is very unlikely to happen since the colony and the food are
 %       both treated as strong pheromone to attract ants.
 % HINT: To get a normal random number, use normrnd(mu, sigma).
-if isempty(pheromones)
-    angle = normrnd(0,sigma_2);
+if length(pheromones) == 0
+    
 end
 
 % Compute the pheromone positions relative to the ant and the corresponding

@@ -1,4 +1,5 @@
-function [x_new, y_new, angle] = MovementValidationExecution(x, y, angle, speed, allowed, forbidden)
+function [x_new, y_new, angle] = MovementValidationExecution(x, y, angle, ...
+    speed, allowed, forbidden)
 %{
 MovementValidationExecution returns new location and the orientation of an
 ant.
@@ -22,6 +23,15 @@ inputs:
                row, the first two elements are (x, y) of the bottom-left 
                corner of the wall, and the last two are (x, y) of the 
                top-right corner.
+. . .
+. x .
+. . . 
+
+8 possible moves
+360/8 = 45
+right point from x is -22.5 to 22.5 deg
+each other point 45 deg window
+
 %}
 
 %Check to make sure angle is good
@@ -63,7 +73,7 @@ elseif (angle <= 15*pi/8) && (angle > 13*pi/8)
     x_new = x+speed;
     y_new = y-speed;
 else
-    disp('rip');
+    error("rip");
 end
 
 % Make sure new location is valid
@@ -72,10 +82,9 @@ if (x_new < allowed(1)) || (y_new < allowed(2)) || (x_new > allowed(3)) || (y_ne
     y_new = y;
     angle = angle+pi;
 else
-    angle = computeNewAngle();
+    angle = computeNewAngle(x_new, y_new, angle, pheromones, concentration, r_smell, sigma_1, sigma_2);
 end
 return;
-
 % First, compute the new location that we are going to validate
 
 % Check whether the new location is within the map (allowed)

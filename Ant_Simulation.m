@@ -118,7 +118,8 @@ for T=1:60
 
     % plot everything
     disp("Iteration " + T)
-
+    
+    ants = [ants_xpos, ants_ypos];
     plot(ants(:, 1), ants(:, 2), "k*", 'MarkerSize', 8)
     hold on
     grid on

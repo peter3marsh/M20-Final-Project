@@ -80,8 +80,6 @@ if (x_new < allowed(1)) || (y_new < allowed(2)) || (x_new > allowed(3)) || (y_ne
     x_new = x;
     y_new = y;
     angle = angle+pi;
-else
-    angle = ComputeNewAngle(x_new, y_new, angle, pheromones, concentration, r_smell, sigma_1, sigma_2);
 end
 return;
 % First, compute the new location that we are going to validate

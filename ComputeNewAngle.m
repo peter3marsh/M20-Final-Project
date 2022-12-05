@@ -2,10 +2,8 @@ function [angle] = ComputeNewAngle(x, y, ant_angle, pheromones, concentration, r
 %{
 ComputeNewAngle computes the angle of the ant is going to orient in the 
 next time step.
-
 outputs:
     angle: the new angle of the ant
-
 inputs:
                 x: the x coordinate of the ant
                 y: the y coordinate of the ant
@@ -30,7 +28,7 @@ inputs:
 %       both treated as strong pheromone to attract ants.
 % HINT: To get a normal random number, use normrnd(mu, sigma).
 if isempty(pheromones)
-    angle = normrnd(0,sigma_2);
+    angle = normrnd(sigma_2/2,sigma_2);
     return
 end
 
@@ -55,7 +53,17 @@ end
 %         the range.
 relative_angles = zeros(1, length(relative_pheromones));
 for i = 1:length(relative_pheromones)
-    relative_angles(i,1) = atan2(relative_pheromones(i,2)/relative_pheromones(i,1)); 
+    if relative_pheromones(i,1) > 0 && relative_pheromones(i,2) > 0
+        relative_angles(i,1) = atan2(relative_pheromones(i,2)/relative_pheromones(i,1)); 
+    elseif relative_pheromones(i,1) < 0 && relative_pheromones(i,2) > 0
+        relative_angles(i,1) = pi-atan2(relative_pheromones(i,2)/relative_pheromones(i,1));
+    elseif relative_pheromones(i,1) < 0 && relative_pheromones(i,2) < 0
+        relative_angles(i,1) = pi+atan2(relative_pheromones(i,2)/relative_pheromones(i,1));
+    elseif relative_pheromones(i,1) > 0 && relative_pheromones(i,2) < 0
+        relative_angles(i,1) = 2*pi-atan2(relative_pheromones(i,2)/relative_pheromones(i,1));
+    else
+        error("rip");
+    end
 end
 relative_angles = mod(relative_angles, 2*pi);
 
@@ -64,10 +72,32 @@ relative_angles = mod(relative_angles, 2*pi);
 % 1. in front of the ant. I.e., the angle between the point of pheromone 
 %    and the orientation of the ant is within pi/2.
 % 2. the distance between the point of pheromone and the ant is smaller 
-%    than r_smell.
+%    than r_smell.   
+ant_angle1 = ant_angle+(pi/2);
+ant_angle2 = ant_angle-(pi/2);
+valid = false;
+while valid == false
+    if ant_angle1 < 0
+       ant_angle1 = ant_angle1 + 2*pi;
+    elseif ant_angle2 < 0
+       ant_angle2 = ant_angle2 + 2*pi;
+    elseif ant_angle1 > 2*pi
+       ant_angle1 = ant_angle1 - 2*pi;
+    elseif ant_angle2 > 2*pi
+       ant_angle2 = ant_angle2 - 2*pi;
+    else
+       valid = true;
+    end
+end
+valid_pheromones = zeros(distances);
 for i = 1:length(relative_angles)
-    if distances(1,i) > r_smell || relative_angles(i,1) <= ant_angle+(pi/2) || relative_angles(i,1) >= ant_angle-(pi/2)
+    if distances(1,i) > r_smell || relative_angles(i,1) >= ant_angle1 || relative_angles(i,1) <= ant_angle2
         relative_angles(i,1) = [];
+        relative_pheromones(i,1) = [];
+        relative_pheromones(i,2) = [];
+        valid_pheromones(i) = [];
+    else
+        valid_pheromones(i) = i;
     end
 end
 
@@ -77,13 +107,25 @@ end
 % NOTE: The procedure is the same as the one when there is no pheromone on 
 %       the map
 if isempty(relative_angles)
-    angle = normrnd(0,sigma_2);
+    angle = normrnd(sigma_2/2,sigma_2);
     return
 end
 
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
 % Compute the mean value of all the effective, relative pheromone positions 
 % weighted by their concentration
+mean = zeros(1,2);
+count = 0;
+for i=1:length(valid_pheromones)
+    conc = concentration(valid_pheromones(i));
+    for j=1:conc
+        mean(1,1) = mean(1,1)+relative_pheromones(i,1);
+        mean(1,2) = mean(1,2)+relative_pheromones(i,2);
+        count=count+1;
+    end
+end
+mean(1,1) = mean(1,1)/count;
+mean(1,2) = mean(1,2)/count;
 
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
 % Compute the new angle the ant will face based on the mean value of all 
@@ -93,4 +135,16 @@ end
 %         controlled by sigma_1. Simply append this noise (angle) to the 
 %         angle you computed before this function returns it.
 
+if mean(1,1) > 0 && mean(1,2) > 0
+    angle = atan2(mean(1,2)/mean(1,1)); 
+elseif mean(1,1) < 0 && mean(1,2) > 0
+    angle = pi-atan2(mean(1,2)/mean(1,1));
+elseif mean(1,1) < 0 && mean(1,2) < 0
+    angle = pi+atan2(mean(1,2)/mean(1,1));
+elseif mean(1,1) > 0 && mean(1,2) < 0
+    angle = 2*pi-atan2(mean(1,2)/mean(1,1));
+else
+    error("rip");
 end
+angle = mod(angle, 2*pi);
+angle = angle+normrnd(sigma_1/2,sigma_1);

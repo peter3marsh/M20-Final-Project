@@ -78,15 +78,15 @@ for T=1:60
         % compute the new angle. 
         % This is where you should call ComputeNewAngle()
         if ants_food(i,1) == true
-            ants_angle = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), blue_pheromones,blue_concentration, r_smell, sigma_1,sigma_2);
+            ants_angle(i,1) = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), blue_pheromones,blue_concentration, r_smell, sigma_1,sigma_2);
         else
-            ants_angle = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), red_pheromones,red_concentration, r_smell, sigma_1,sigma_2);
+            ants_angle(i,1) = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), red_pheromones,red_concentration, r_smell, sigma_1,sigma_2);
         end
         
         % check movement validity. 
         % This is where you should call MovementValidationExecution()       
         % update ant location and angle of the ant
-        MovementValidationExecution(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), ants_speed, map_coordinates, forbidden);
+        MovementValidationExecution(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), ants_speed, map_coordinates);
         
         % if ant is not carrying food, 
             % Check the food proximity and grab food if it's close to a 

@@ -1,5 +1,4 @@
-function [x_new, y_new, angle] = MovementValidationExecution(x, y, angle, ...
-    speed, allowed, forbidden)
+function [x_new, y_new, angle] = MovementValidationExecution(x, y, angle, speed, allowed)
 %{
 MovementValidationExecution returns new location and the orientation of an
 ant.
@@ -82,7 +81,7 @@ if (x_new < allowed(1)) || (y_new < allowed(2)) || (x_new > allowed(3)) || (y_ne
     y_new = y;
     angle = angle+pi;
 else
-    angle = computeNewAngle(x_new, y_new, angle, pheromones, concentration, r_smell, sigma_1, sigma_2);
+    angle = ComputeNewAngle(x_new, y_new, angle, pheromones, concentration, r_smell, sigma_1, sigma_2);
 end
 return;
 % First, compute the new location that we are going to validate

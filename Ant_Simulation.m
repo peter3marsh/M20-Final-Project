@@ -128,23 +128,16 @@ for T=1:60
     % Add colony
     viscircles(colony_pos,colony_proximity_threshold,'Color',"c");
     % plot the pheromones    
-%     rpheromones_duration_plot = red_decay(red_decay<=1);
-%     rpheromones_plot = red_pheromones(red_decay<=1, :);
-% 
-%     if length(rpheromones_duration_plot)>=1
+    
+    if length(red_pheromones)>=1
+        rpheromones = [red_pheromones(:,1), red_pheromones(:,2)];
         rpheromones = scatter(red_pheromones(:,1), red_pheromones(:,2), 8, "filled", "r");
-%         rpheromones.AlphaData = rpheromones_duration_plot;
-%         rpheromones.MarkerFaceAlpha = 'flat';
-%     end
+    end
 
-%     bpheromones_duration_plot = blue_decay(blue_decay<=1);
-%     bpheromones_plot = blue_pheromones(blue_decay<=1, :);
-%     
-%     if length(bpheromones_duration_plot)>=1
+    if length(blue_pheromones)>=1
+        bpheromones = [blue_pheromones(:,1), blue_pheromones(:,2)];
         bpheromones = scatter(blue_pheromones(:,1), blue_pheromones(:,2), 8, "filled", "b");
-%         bpheromones.AlphaData = bpheromones_duration_plot;
-%         bpheromones.MarkerFaceAlpha = 'flat';
-%     end
+    end
 
     title("Time step: " + T)
     hold off

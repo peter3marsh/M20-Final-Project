@@ -34,8 +34,8 @@ end
 
 % Compute the pheromone positions relative to the ant and the corresponding
 % distances (distance between a point of pheromone and the ant)
-relative_pheromones = pheromones(:,1) - x; 
-relative_pheromones = pheromones(:,2) - y;
+relative_pheromones(:,1) = pheromones(:,1) - x; 
+relative_pheromones(:,2) = pheromones(:,2) - y;
 distances = zeros(1,length(pheromones));
 for i = 1:length(relative_pheromones)
     distance = sqrt(( relative_pheromones(i,1) )^2 + ( relative_pheromones(i,2) )^2);

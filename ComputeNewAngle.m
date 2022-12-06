@@ -92,10 +92,10 @@ end
 valid_pheromones = zeros(distances);
 for i = 1:size(relative_pheromones,1)
     if distances(1,i) > r_smell || relative_angles(1,i) >= ant_angle1 || relative_angles(1,i) <= ant_angle2
-        relative_angles(1,i) = [];
-        relative_pheromones(i,1) = [];
-        relative_pheromones(i,2) = [];
-        valid_pheromones(i) = [];
+        relative_angles(1,i) = NaN;
+        relative_pheromones(i,1) = NaN;
+        relative_pheromones(i,2) = NaN;
+        valid_pheromones(i) = NaN;
     else
         valid_pheromones(i) = i;
     end
@@ -117,11 +117,13 @@ end
 mean = zeros(1,2);
 count = 0;
 for i=1:length(valid_pheromones)
-    conc = concentration(valid_pheromones(i));
-    for j=1:conc
-        mean(1,1) = mean(1,1)+relative_pheromones(i,1);
-        mean(1,2) = mean(1,2)+relative_pheromones(i,2);
-        count=count+1;
+    if isnan(relative_pheromones(i,1)) == false && isnan(relative_pheromones(i,2)) == false
+        conc = concentration(valid_pheromones(i));
+        for j=1:conc
+            mean(1,1) = mean(1,1)+relative_pheromones(i,1);
+            mean(1,2) = mean(1,2)+relative_pheromones(i,2);
+            count=count+1;
+        end
     end
 end
 mean(1,1) = mean(1,1)/count;
@@ -135,7 +137,7 @@ mean(1,2) = mean(1,2)/count;
 %         controlled by sigma_1. Simply append this noise (angle) to the 
 %         angle you computed before this function returns it.
 
-if mean(1,1) > 0 && mean(1,2) > 0
+if mean(1,1) >= 0 && mean(1,2) >= 0
     angle = atan2(mean(1,2),mean(1,1)); 
 elseif mean(1,1) < 0 && mean(1,2) > 0
     angle = pi-atan2(mean(1,2),mean(1,1));

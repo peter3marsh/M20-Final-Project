@@ -37,7 +37,7 @@ end
 relative_pheromones(:,1) = pheromones(:,1) - x; 
 relative_pheromones(:,2) = pheromones(:,2) - y;
 distances = zeros(1,length(pheromones));
-for i = 1:length(relative_pheromones)
+for i = 1:size(relative_pheromones,1)
     distance = sqrt(( relative_pheromones(i,1) )^2 + ( relative_pheromones(i,2) )^2);
     distances(1,i) = distance;
 end
@@ -51,16 +51,16 @@ end
 %         angles between 0 and 2pi. To do so, use the mod() function with 
 %         2pi as the divisor to make sure all the angles would be within 
 %         the range.
-relative_angles = zeros(1, length(relative_pheromones));
-for i = 1:length(relative_pheromones)
-    if relative_pheromones(i,1) > 0 && relative_pheromones(i,2) > 0
-        relative_angles(i,1) = atan2(relative_pheromones(i,2)/relative_pheromones(i,1)); 
+relative_angles = zeros(1,length(relative_pheromones));
+for i = 1:size(relative_pheromones,1)
+    if relative_pheromones(i,1) >= 0 && relative_pheromones(i,2) >= 0
+        relative_angles(1,i) = atan2(relative_pheromones(i,2),relative_pheromones(i,1)); 
     elseif relative_pheromones(i,1) < 0 && relative_pheromones(i,2) > 0
-        relative_angles(i,1) = pi-atan2(relative_pheromones(i,2)/relative_pheromones(i,1));
+        relative_angles(1,i) = pi-atan2(relative_pheromones(i,2),relative_pheromones(i,1));
     elseif relative_pheromones(i,1) < 0 && relative_pheromones(i,2) < 0
-        relative_angles(i,1) = pi+atan2(relative_pheromones(i,2)/relative_pheromones(i,1));
+        relative_angles(1,i) = pi+atan2(relative_pheromones(i,2),relative_pheromones(i,1));
     elseif relative_pheromones(i,1) > 0 && relative_pheromones(i,2) < 0
-        relative_angles(i,1) = 2*pi-atan2(relative_pheromones(i,2)/relative_pheromones(i,1));
+        relative_angles(1,i) = 2*pi-atan2(relative_pheromones(i,2),relative_pheromones(i,1));
     else
         error("rip");
     end
@@ -90,9 +90,9 @@ while valid == false
     end
 end
 valid_pheromones = zeros(distances);
-for i = 1:length(relative_angles)
-    if distances(1,i) > r_smell || relative_angles(i,1) >= ant_angle1 || relative_angles(i,1) <= ant_angle2
-        relative_angles(i,1) = [];
+for i = 1:size(relative_pheromones,1)
+    if distances(1,i) > r_smell || relative_angles(1,i) >= ant_angle1 || relative_angles(1,i) <= ant_angle2
+        relative_angles(1,i) = [];
         relative_pheromones(i,1) = [];
         relative_pheromones(i,2) = [];
         valid_pheromones(i) = [];
@@ -136,13 +136,13 @@ mean(1,2) = mean(1,2)/count;
 %         angle you computed before this function returns it.
 
 if mean(1,1) > 0 && mean(1,2) > 0
-    angle = atan2(mean(1,2)/mean(1,1)); 
+    angle = atan2(mean(1,2),mean(1,1)); 
 elseif mean(1,1) < 0 && mean(1,2) > 0
-    angle = pi-atan2(mean(1,2)/mean(1,1));
+    angle = pi-atan2(mean(1,2),mean(1,1));
 elseif mean(1,1) < 0 && mean(1,2) < 0
-    angle = pi+atan2(mean(1,2)/mean(1,1));
+    angle = pi+atan2(mean(1,2),mean(1,1));
 elseif mean(1,1) > 0 && mean(1,2) < 0
-    angle = 2*pi-atan2(mean(1,2)/mean(1,1));
+    angle = 2*pi-atan2(mean(1,2),mean(1,1));
 else
     error("rip");
 end

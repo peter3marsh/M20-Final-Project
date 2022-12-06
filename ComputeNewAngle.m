@@ -106,9 +106,17 @@ end
 % terminates and returns the angle.
 % NOTE: The procedure is the same as the one when there is no pheromone on 
 %       the map
-if isempty(relative_angles)
-    angle = normrnd(sigma_2/2,sigma_2);
-    return
+check = 1;
+for i=1:length(relative_angles)
+    if isnan(relative_angles(i)) == true 
+        check = check+1;
+    else
+        break;
+    end
+    if check == length(relative_angles)
+        angle = normrnd(sigma_2/2,sigma_2);
+        return;
+    end
 end
 
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)

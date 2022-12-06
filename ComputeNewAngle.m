@@ -89,7 +89,7 @@ while valid == false
        valid = true;
     end
 end
-valid_pheromones = zeros(distances);
+valid_pheromones = zeros(length(distances));
 for i = 1:size(relative_pheromones,1)
     if distances(1,i) > r_smell || relative_angles(1,i) >= ant_angle1 || relative_angles(1,i) <= ant_angle2
         relative_angles(1,i) = NaN;

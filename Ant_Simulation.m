@@ -86,14 +86,18 @@ for T=1:60
         % check movement validity. 
         % This is where you should call MovementValidationExecution()       
         % update ant location and angle of the ant
-        MovementValidationExecution(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), ants_speed, map_coordinates);
+        [x_new, y_new, angle] = MovementValidationExecution(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), ants_speed, map_coordinates);
+        ants_xpos(i,1) = x_new;
+        ants_ypos(i,1) = y_new; 
+        ants_angle(i,1) = angle;
         
         % if ant is not carrying food, 
             % Check the food proximity and grab food if it's close to a 
             % source. This is where you call CheckFoodProximity()
             % Leave blue pheromone
         if ants_food == 0
-            if CheckFoodProximity(ants_xpos(i,1), ants_ypos(i,1), food_sources, food_proximity_threshold)
+            [food_sources, indicator] = CheckFoodProximity(ants_xpos(i,1), ants_ypos(i,1), food_sources, food_proximity_threshold);
+            if indicator == true
                 ants_food(i,1) = 1; 
             end
             blue_pheromones = [ blue_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];

@@ -55,11 +55,11 @@ relative_angles = zeros(1,length(relative_pheromones));
 for i = 1:size(relative_pheromones,1)
     if relative_pheromones(i,1) >= 0 && relative_pheromones(i,2) >= 0
         relative_angles(1,i) = atan2(relative_pheromones(i,2),relative_pheromones(i,1)); 
-    elseif relative_pheromones(i,1) < 0 && relative_pheromones(i,2) > 0
+    elseif relative_pheromones(i,1) <= 0 && relative_pheromones(i,2) >= 0
         relative_angles(1,i) = pi-atan2(relative_pheromones(i,2),relative_pheromones(i,1));
-    elseif relative_pheromones(i,1) < 0 && relative_pheromones(i,2) < 0
+    elseif relative_pheromones(i,1) <= 0 && relative_pheromones(i,2) <= 0
         relative_angles(1,i) = pi+atan2(relative_pheromones(i,2),relative_pheromones(i,1));
-    elseif relative_pheromones(i,1) > 0 && relative_pheromones(i,2) < 0
+    elseif relative_pheromones(i,1) >= 0 && relative_pheromones(i,2) <= 0
         relative_angles(1,i) = 2*pi-atan2(relative_pheromones(i,2),relative_pheromones(i,1));
     else
         error("rip");

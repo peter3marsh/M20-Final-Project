@@ -143,9 +143,7 @@ for T=1:60
         bpheromones = scatter(blue_pheromones(:,1), blue_pheromones(:,2), 8, "filled", "b");
     end
 
-    if length(food_sources) >= 1
-        food_source_plot = scatter(food_sources(:,1), food_sources(:,2), 8, 'magenta', 'hexagram');
-    end
+    food_source_plot = scatter(food_sources(i,1), food_sources(i,2), 8, 'magenta', );
 
     title("Time step: " + T)
     hold off

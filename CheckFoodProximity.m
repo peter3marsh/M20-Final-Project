@@ -20,9 +20,9 @@ inputs:
 
 % Compute the distances from the ant to all the points of food
 distances = zeros(1,length(food_sources));
-for i = 1:length(food_sources)
+for i = 1:length(food_sources(:,1))
     distance = sqrt(( x - food_sources(i,1) )^2 + ( y - food_sources(i,2) )^2);
-    distances(1,i) = distance;
+    distances(i) = distance;
 end
 
 % Get the distance and the corresponding index of the closest point of food
@@ -41,5 +41,5 @@ if min_value <= food_proximity_threshold
 %   HINT: in this case, the food_sources variable is not changed.
 else 
     indicator = 0;
-
+end
 end

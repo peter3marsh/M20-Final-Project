@@ -1,4 +1,12 @@
-% Cache clearing
+% Cache Clearing
+clc
+clear
+close all
+
+% CURRENT ISSUES
+% As soon as an ant reaches food we get a 'rip' error from ComputeNewAngle.
+% This problem has 
+
 % Assign the random seed using rng() based on your group number
 
 % load the map (a given .mat file)
@@ -25,8 +33,8 @@ load('map1.mat')
 %  r_smell: [0, 10]
 %  sigma_1: [0, +Inf]
 %  sigma_2: [0, +Inf]
-blue_decay = 0.5;
-red_decay = 0.5;
+blue_decay = 0.05;
+red_decay = 0.01;
 r_smell = 5;
 sigma_1 = 10;
 sigma_2 = 10;
@@ -72,15 +80,15 @@ videoFile.FrameRate = 30;  % Set the video frame rate (30 is the default value)
 open(videoFile) % open the video file to write data
 
 % iterate over timestamps (i.e., for each timestamp...)
-for T=1:60
+for time=1:T
     % iterate over ants (i.e., for each ant...)
     for i = 1:n_ants
         % compute the new angle. 
         % This is where you should call ComputeNewAngle()
         if ants_food(i,1) == true
-            ants_angle(i,1) = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), blue_pheromones,blue_concentration, r_smell, sigma_1,sigma_2);
+            ants_angle(i,1) = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), blue_pheromones, blue_concentration, r_smell, sigma_1, sigma_2);
         else
-            ants_angle(i,1) = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), red_pheromones,red_concentration, r_smell, sigma_1,sigma_2);
+            ants_angle(i,1) = ComputeNewAngle(ants_xpos(i,1), ants_ypos(i,1), ants_angle(i,1), red_pheromones, red_concentration, r_smell, sigma_1, sigma_2);
         end
         
         % check movement validity. 
@@ -101,6 +109,12 @@ for T=1:60
                 ants_food(i,1) = 1; 
             end
             blue_pheromones = [ blue_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
+            if length(blue_pheromones(:,1)) ~= length(blue_concentration)
+                blue_concentration = [ blue_concentration, 1 ];
+            else
+                blue_concentration(i) = blue_concentration(i) + 1;
+            end
+
         % else, (the ant is carrying food)
             % Check the colony proximity and drop the food if it's close. 
             % This is where you should call CheckColonyProximity()
@@ -111,41 +125,48 @@ for T=1:60
                 ants_food(i,1) = 0;
             end
             red_pheromones = [ red_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
+            if length(red_pheromones(:,1)) ~= length(red_concentration)
+                red_concentration = [ red_concentration, 1 ];
+            else
+                red_concentration(i) = red_concentration(i) + 1;
+            end
         end
 
     % end iterate over ants
     end
     
     % update pheromones. This is where you should call PheromonesUpdate()
-    PheromonesUpdate(blue_pheromones, blue_concentration, blue_decay);
-    PheromonesUpdate(red_pheromones, red_concentration, red_decay);
+    [blue_pheromones, blue_concentration] = PheromonesUpdate(blue_pheromones, blue_concentration, blue_decay);
+    [red_pheromones, red_concentration] = PheromonesUpdate(red_pheromones, red_concentration, red_decay);
 
     % plot everything
-    disp("Iteration " + T)
+    disp("Iteration " + time)
     
     ants = [ants_xpos, ants_ypos];
     plot(ants(:, 1), ants(:, 2), "k*", 'MarkerSize', 8)
     hold on
     grid on
-    xlim([-50 100])
-    ylim([-50 100])
+    xlim([0 100])
+    ylim([0 100])
     % Add colony
     viscircles(colony_pos,colony_proximity_threshold,'Color',"c");
 
     % plot the pheromones    
     if length(red_pheromones)>=1
-        rpheromones = [red_pheromones(:,1), red_pheromones(:,2)];
-        rpheromones = scatter(red_pheromones(:,1), red_pheromones(:,2), 8, "filled", "r");
+        rpheromones = [red_pheromones(:,1), red_pheromones(:,2)]; %#ok<NASGU> 
+        rpheromones = scatter(red_pheromones(:,1), red_pheromones(:,2), 8, "red", "diamond");
     end
 
     if length(blue_pheromones)>=1
-        bpheromones = [blue_pheromones(:,1), blue_pheromones(:,2)];
-        bpheromones = scatter(blue_pheromones(:,1), blue_pheromones(:,2), 8, "filled", "b");
+        bpheromones = [blue_pheromones(:,1), blue_pheromones(:,2)]; %#ok<NASGU> 
+        bpheromones = scatter(blue_pheromones(:,1), blue_pheromones(:,2), 8, "blue", "diamond");
     end
 
-    food_source_plot = scatter(food_sources(i,1), food_sources(i,2), 8, 'magenta', );
+    if length(food_sources) >= 1
+        food_source_plot = scatter(food_sources(:,1), food_sources(:,2), 8, 'magenta', 'v');
+    end
 
-    title("Time step: " + T)
+    title("Time step: " + time)
     hold off
 
     % Capture a frame and write into the video file

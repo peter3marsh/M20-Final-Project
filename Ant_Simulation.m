@@ -110,11 +110,21 @@ for time=1:T
             if indicator == true
                 ants_food(i,1) = 1; 
             end
-            blue_pheromones = [ blue_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
-            if length(blue_pheromones(:,1)) ~= length(blue_concentration)
+
+            added_indicator = 0;
+            if ~isempty(blue_pheromones)
+                for j = 1:length(blue_pheromones(:,1))
+                    if blue_pheromones(j,:) == [ants_xpos(i,1), ants_ypos(i,1)]
+                        blue_concentration(j) = blue_concentration(j) + 1;
+                        added_indicator = 1;
+                        break
+                    end
+                end
+            end
+
+            if added_indicator == 0
+                blue_pheromones = [ blue_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
                 blue_concentration = [ blue_concentration, 1 ];
-            else
-                blue_concentration(i) = blue_concentration(i) + 1;
             end
 
         % else, (the ant is carrying food)
@@ -126,11 +136,21 @@ for time=1:T
             if CheckColonyProximity(ants_xpos(i,1), ants_ypos(i,1), colony_pos, colony_proximity_threshold)
                 ants_food(i,1) = 0;
             end
-            red_pheromones = [ red_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
-            if length(red_pheromones(:,1)) ~= length(red_concentration)
+
+            added_indicator = 0;
+            if ~isempty(red_pheromones)
+                for j = 1:length(red_pheromones(:,1))
+                    if red_pheromones(j,:) == [ants_xpos(i,1), ants_ypos(i,1)]
+                        red_concentration(j) = red_concentration(j) + 1;
+                        added_indicator = 1;
+                        break
+                    end
+                end
+            end
+
+            if added_indicator == 0
+                red_pheromones = [ red_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
                 red_concentration = [ red_concentration, 1 ];
-            else
-                red_concentration(i) = red_concentration(i) + 1;
             end
         end
 

@@ -97,6 +97,11 @@ for i = 1:size(relative_pheromones,1)
         relative_pheromones(i,1) = NaN;
         relative_pheromones(i,2) = NaN;
         valid_pheromones(i,1) = NaN;
+    elseif relative_angles(1,i) >= ant_angle1 && relative_angles <= ant_angle2
+        relative_angles(1,i) = NaN;
+        relative_pheromones(i,1) = NaN;
+        relative_pheromones(i,2) = NaN;
+        valid_pheromones(i,1) = NaN;
     else
         valid_pheromones(i,1) = i;
     end
@@ -119,7 +124,6 @@ for i = 1:length(valid_pheromones)
         return;
     end
 end
-check = 0;
 % for i=1:size(relative_pheromones,1)
 %     if isnan(relative_pheromones(i,1)) == true || isnan(relative_pheromones(i,2)) == true
 %         check = check+1;
@@ -159,7 +163,8 @@ for i=1:length(valid_pheromones)
     end
 end
 mean = mean/weight;
-angle = mod(mean, 2*pi);
+mean = mod(mean, 2*pi);
+angle = ant_angle+mean+normrnd(sigma_1/2,sigma_1);
 return;
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
 % Compute the new angle the ant will face based on the mean value of all 

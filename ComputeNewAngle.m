@@ -28,7 +28,7 @@ inputs:
 %       both treated as strong pheromone to attract ants.
 % HINT: To get a normal random number, use normrnd(mu, sigma).
 if isempty(pheromones)
-    angle = normrnd(ant_angle/2,sigma_2);
+    angle = ant_angle + normrnd(0,sigma_2);
     return
 end
 

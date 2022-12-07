@@ -35,11 +35,11 @@ load('map1.mat')
 %  r_smell: [0, 10]
 %  sigma_1: [0, +Inf]
 %  sigma_2: [0, +Inf]
-blue_decay = 0.05;
+blue_decay = 0.03;
 red_decay = 0.05;
-r_smell = 5;
-sigma_1 = 0;
-sigma_2 = 10;
+r_smell = 10;
+sigma_1 = 0.7;
+sigma_2 = 0.7;
 
 % fixed parameters
 ants_speed = 1;
@@ -122,11 +122,6 @@ for time=1:T
                 blue_pheromones = [ blue_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
                 blue_concentration = [ blue_concentration, 1 ];
             end
-%             if length(blue_pheromones(:,1)) ~= length(blue_concentration)
-%                 blue_concentration = [ blue_concentration, 1 ];
-%             else
-%                 blue_concentration(i) = blue_concentration(i) + 1;
-%             end
 
         % else, (the ant is carrying food)
             % Check the colony proximity and drop the food if it's close. 
@@ -150,12 +145,6 @@ for time=1:T
                 red_pheromones = [ red_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
                 red_concentration = [ red_concentration, 1 ];
             end
-%             red_pheromones = [ red_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
-%             if length(red_pheromones(:,1)) ~= length(red_concentration)
-%                 red_concentration = [ red_concentration, 1 ];
-%             else
-%                 red_concentration(i) = red_concentration(i) + 1;
-%             end
         end
 
     % end iterate over ants
@@ -172,8 +161,9 @@ for time=1:T
     plot(ants(:, 1), ants(:, 2), "k*", 'MarkerSize', 8)
     hold on
     grid on
-    xlim([10 50])
-    ylim([50 90])
+    xlim([map_coordinates(1) map_coordinates(3)])
+    ylim([map_coordinates(2) map_coordinates(4)])
+
     % Add colony
     viscircles(colony_pos,colony_proximity_threshold,'Color',"c");
 

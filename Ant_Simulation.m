@@ -35,10 +35,10 @@ load('map1.mat')
 %  r_smell: [0, 10]
 %  sigma_1: [0, +Inf]
 %  sigma_2: [0, +Inf]
-blue_decay = 0.1;
+blue_decay = 0.05;
 red_decay = 0.05;
 r_smell = 5;
-sigma_1 = 0;
+sigma_1 = 10;
 sigma_2 = 10;
 
 % fixed parameters
@@ -50,7 +50,7 @@ ants_speed = 1;
 %  ants_ypos: an n_ants-by-1 array cantaining the y coordinates for all ants
 %  ants_food: an n_ants-by-1 boolean array to indicate whether the ant 
 %             carries food or not
-ants_angle = zeros(n_ants,1); %.*rand(n_ants,1)*2*pi;
+ants_angle = zeros(n_ants,1) * rand(1,1)*2*pi;
 ants_xpos = zeros(n_ants,1) + colony_pos(1); 
 ants_ypos = zeros(n_ants,1) + colony_pos(2); 
 ants_food = zeros(n_ants, 1);

@@ -28,7 +28,7 @@ inputs:
 %       both treated as strong pheromone to attract ants.
 % HINT: To get a normal random number, use normrnd(mu, sigma).
 if isempty(pheromones)
-    angle = normrnd(sigma_2/2,sigma_2);
+    angle = normrnd(ant_angle/2,sigma_2);
     return
 end
 
@@ -68,7 +68,7 @@ for i = 1:size(relative_pheromones,1)
     end
 end
 
-% Filter out the points of pheromone that are not withing the region that 
+% Filter out the points of pheromone that are not within the region that 
 % the ant can sense. A effective point of pheromone for the ant is:
 % 1. in front of the ant. I.e., the angle between the point of pheromone 
 %    and the orientation of the ant is within pi/2.
@@ -93,12 +93,12 @@ end
 x = length(relative_angles);
 valid_pheromones = zeros(x,1);
 for i = 1:size(relative_pheromones,1)
-    if distances(1,i) > r_smell || relative_angles(1,i) >= ant_angle1 || relative_angles(1,i) <= ant_angle2
+    if distances(1,i) > r_smell
         relative_angles(1,i) = NaN;
         relative_pheromones(i,1) = NaN;
         relative_pheromones(i,2) = NaN;
         valid_pheromones(i,1) = NaN;
-    elseif relative_angles(1,i) >= ant_angle1 && relative_angles <= ant_angle2
+    elseif relative_angles(1,i) >= ant_angle1 && relative_angles(1,i) <= ant_angle2
         relative_angles(1,i) = NaN;
         relative_pheromones(i,1) = NaN;
         relative_pheromones(i,2) = NaN;
@@ -164,8 +164,8 @@ for i=1:length(valid_pheromones)
     end
 end
 mean = mean/weight;
-mean = mod(mean, 2*pi);
-angle = ant_angle+mean+normrnd(sigma_1/2,sigma_1);
+% angle = ant_angle+mean+normrnd(sigma_1/2,sigma_1);
+angle = normrnd(mean,sigma_1);
 return;
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
 % Compute the new angle the ant will face based on the mean value of all 

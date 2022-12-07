@@ -90,6 +90,7 @@ while valid == false
        valid = true;
     end
 end
+
 x = length(relative_angles);
 valid_pheromones = zeros(x,1);
 for i = 1:size(relative_pheromones,1)
@@ -121,38 +122,14 @@ for i = 1:length(valid_pheromones)
         break;
     end
     if check == length(valid_pheromones)
-        angle = normrnd(sigma_2/2,sigma_2);
+        angle = ant_angle + normrnd(0,sigma_2);
         return;
     end
 end
-% for i=1:size(relative_pheromones,1)
-%     if isnan(relative_pheromones(i,1)) == true || isnan(relative_pheromones(i,2)) == true
-%         check = check+1;
-%     else
-%         break;
-%     end
-%     if check == size(relative_pheromones,1)
-%         angle = normrnd(sigma_2/2,sigma_2);
-%         return;
-%     end
-% end
+
 % (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
 % Compute the mean value of all the effective, relative pheromone positions 
 % weighted by their concentration
-% mean = zeros(1,2);
-% count = 0;
-% for i=1:length(valid_pheromones)
-%     if isnan(relative_pheromones(i,1)) == false && isnan(relative_pheromones(i,2)) == false
-%         conc = concentration(valid_pheromones(i))
-%         for j=1:conc
-%             mean(1,1) = mean(1,1)+relative_pheromones(i,1);
-%             mean(1,2) = mean(1,2)+relative_pheromones(i,2);
-%             count=count+1;
-%         end
-%     end
-% end
-% mean(1,1) = mean(1,1)/count;
-% mean(1,2) = mean(1,2)/count;
 
 mean = 0;
 weight = 0;
@@ -164,27 +141,7 @@ for i=1:length(valid_pheromones)
     end
 end
 mean = mean/weight;
-% angle = ant_angle+mean+normrnd(sigma_1/2,sigma_1);
-angle = normrnd(mean,sigma_1);
-return;
-% (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
-% Compute the new angle the ant will face based on the mean value of all 
-% the effective, relative pheromone positions.
-% HINT: Use atan2() and mod() function again.
-% HINT 2: This angle is affected by a normal random background noise 
-%         controlled by sigma_1. Simply append this noise (angle) to the 
-%         angle you computed before this function returns it.
 
-% if mean(1,1) >= 0 && mean(1,2) >= 0
-%     angle = atan2(mean(1,2),mean(1,1)); 
-% elseif mean(1,1) <= 0 && mean(1,2) >= 0
-%     angle = pi-atan2(mean(1,2),mean(1,1));
-% elseif mean(1,1) <= 0 && mean(1,2) <= 0
-%     angle = pi+atan2(mean(1,2),mean(1,1));
-% elseif mean(1,1) >= 0 && mean(1,2) <= 0
-%     angle = 2*pi-atan2(mean(1,2),mean(1,1));
-% else
-%     error("rip");
-% end
-% angle = mod(angle, 2*pi);
-% angle = angle+normrnd(sigma_1/2,sigma_1);
+% Assign the ant a new angle, factoring in noise with sigma_1
+angle = mean + normrnd(0,sigma_1);
+return;

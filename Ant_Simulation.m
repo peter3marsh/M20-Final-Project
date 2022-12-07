@@ -38,7 +38,7 @@ load('map1.mat')
 blue_decay = 0.05;
 red_decay = 0.05;
 r_smell = 5;
-sigma_1 = 10;
+sigma_1 = 0;
 sigma_2 = 10;
 
 % fixed parameters

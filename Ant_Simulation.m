@@ -35,10 +35,10 @@ load('map1.mat')
 %  r_smell: [0, 10]
 %  sigma_1: [0, +Inf]
 %  sigma_2: [0, +Inf]
-blue_decay = 0.01;
-red_decay = 0.1;
+blue_decay = 0.1;
+red_decay = 0.05;
 r_smell = 5;
-sigma_1 = 10;
+sigma_1 = 0;
 sigma_2 = 10;
 
 % fixed parameters
@@ -136,6 +136,7 @@ for time=1:T
         else
             if CheckColonyProximity(ants_xpos(i,1), ants_ypos(i,1), colony_pos, colony_proximity_threshold)
                 ants_food(i,1) = 0;
+                colony_food_counter = colony_food_counter + 1; 
             end
             check = false;
             for j = 1:size(red_pheromones,1)

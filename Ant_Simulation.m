@@ -36,10 +36,10 @@ load('map1.mat')
 %  sigma_1: [0, +Inf]
 %  sigma_2: [0, +Inf]
 blue_decay = 0.03;
-red_decay = 0.05;
+red_decay = 0.03;
 r_smell = 10;
-sigma_1 = 0.7;
-sigma_2 = 0.7;
+sigma_1 = pi/20;
+sigma_2 = pi/4;
 
 % fixed parameters
 ants_speed = 1;
@@ -50,7 +50,7 @@ ants_speed = 1;
 %  ants_ypos: an n_ants-by-1 array cantaining the y coordinates for all ants
 %  ants_food: an n_ants-by-1 boolean array to indicate whether the ant 
 %             carries food or not
-ants_angle = zeros(n_ants,1) * rand(1,1)*2*pi;
+ants_angle = ones(n_ants,1) * rand(1,1)*2*pi;
 ants_xpos = zeros(n_ants,1) + colony_pos(1); 
 ants_ypos = zeros(n_ants,1) + colony_pos(2); 
 ants_food = zeros(n_ants, 1);
@@ -68,10 +68,10 @@ ants_food = zeros(n_ants, 1);
 %  red_concentration: an N-by-1 array to indicate the concentration of the 
 %                     red pheromone. concentration(i) is the concertration 
 %                     of the pheromone corresponds to pheromones(i, :)
-blue_pheromones = [];
-red_pheromones = [];
-blue_concentration = [];
-red_concentration = [];
+blue_pheromones = colony_pos;
+red_pheromones = food_sources;
+blue_concentration = 1e6;
+red_concentration = 1e6 * ones(1,length(food_sources));
 
 % initialize colony food counter variable
 colony_food_counter = 0;
@@ -109,19 +109,11 @@ for time=1:T
             [food_sources, indicator] = CheckFoodProximity(ants_xpos(i,1), ants_ypos(i,1), food_sources, food_proximity_threshold);
             if indicator == true
                 ants_food(i,1) = 1; 
+                ants_angle(i,1) = mod(ants_angle(i,1) + pi, 2*pi);
             end
-            check = false;
-            for j = 1:size(blue_pheromones,1)
-                if ants_xpos(i,1) == blue_pheromones(j,1) && ants_ypos(i,1) == blue_pheromones(j,2)
-                    blue_concentration(j) = blue_concentration(j)+1;
-                    check = true;
-                    break;
-                end
-            end
-            if check == false
-                blue_pheromones = [ blue_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
-                blue_concentration = [ blue_concentration, 1 ];
-            end
+
+            blue_pheromones(end+1, :) = [ants_xpos(i) ants_ypos(i)];
+            blue_concentration(end+1) = 1; 
 
         % else, (the ant is carrying food)
             % Check the colony proximity and drop the food if it's close. 
@@ -131,20 +123,13 @@ for time=1:T
         else
             if CheckColonyProximity(ants_xpos(i,1), ants_ypos(i,1), colony_pos, colony_proximity_threshold)
                 ants_food(i,1) = 0;
-                colony_food_counter = colony_food_counter + 1; 
+                colony_food_counter = colony_food_counter + 1;
+
+                ants_angle(i,1) = mod(ants_angle(i,1) + pi, 2*pi);
             end
-            check = false;
-            for j = 1:size(red_pheromones,1)
-                if ants_xpos(i,1) == red_pheromones(j,1) && ants_ypos(i,1) == red_pheromones(j,2)
-                    red_concentration(j) = red_concentration(j)+1;
-                    check = true;
-                    break;
-                end
-            end
-            if check == false
-                red_pheromones = [ red_pheromones; [ants_xpos(i,1), ants_ypos(i,1)] ];
-                red_concentration = [ red_concentration, 1 ];
-            end
+
+            red_pheromones(end+1, :) = [ants_xpos(i) ants_ypos(i)];
+            red_concentration(end+1) = 1; 
         end
 
     % end iterate over ants

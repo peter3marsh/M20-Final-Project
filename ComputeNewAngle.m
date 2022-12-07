@@ -36,11 +36,7 @@ end
 % distances (distance between a point of pheromone and the ant)
 relative_pheromones(:,1) = pheromones(:,1) - x; 
 relative_pheromones(:,2) = pheromones(:,2) - y;
-distances = zeros(1,length(pheromones));
-for i = 1:size(relative_pheromones,1)
-    distance = sqrt(( relative_pheromones(i,1) )^2 + ( relative_pheromones(i,2) )^2);
-    distances(1,i) = distance;
-end
+distances = sqrt(sum(relative_pheromones.^2,2));
 
 % Compute the pheromone angles with respect to the x axis in the range of 
 % [0, 2*pi]
@@ -51,97 +47,26 @@ end
 %         angles between 0 and 2pi. To do so, use the mod() function with 
 %         2pi as the divisor to make sure all the angles would be within 
 %         the range.
-relative_angles = zeros(1,size(relative_pheromones,1));
-for i = 1:size(relative_pheromones,1)
-    if relative_pheromones(i,1) == 0 && relative_pheromones(i,2) == 0
-        relative_angles(1,i) = 0;
-    elseif relative_pheromones(i,1) == 0 && relative_pheromones(i,2) > 0
-        relative_angles(1,i) = pi/2;
-    elseif relative_pheromones(i,1) == 0 && relative_pheromones(i,2) < 0
-        relative_angles(1,i) = 3*pi/2;
-    elseif relative_pheromones(i,2) >= 0
-        relative_angles(1,i) = atan2(relative_pheromones(i,2),relative_pheromones(i,1));
-    elseif relative_pheromones(i,2) < 0
-        relative_angles(1,i) = 2*pi+atan2(relative_pheromones(i,2),relative_pheromones(i,1));
-    else
-        error("rip");
-    end
-end
+relative_angles = mod(atan2(relative_pheromones(:,2), relative_pheromones(:,1)), 2*pi);
 
 % Filter out the points of pheromone that are not within the region that 
 % the ant can sense. A effective point of pheromone for the ant is:
 % 1. in front of the ant. I.e., the angle between the point of pheromone 
 %    and the orientation of the ant is within pi/2.
 % 2. the distance between the point of pheromone and the ant is smaller 
-%    than r_smell.   
-ant_angle1 = ant_angle+(pi/2);
-ant_angle2 = ant_angle-(pi/2);
-valid = false;
-while valid == false
-    if ant_angle1 < 0
-       ant_angle1 = ant_angle1 + 2*pi;
-    elseif ant_angle2 < 0
-       ant_angle2 = ant_angle2 + 2*pi;
-    elseif ant_angle1 > 2*pi
-       ant_angle1 = ant_angle1 - 2*pi;
-    elseif ant_angle2 > 2*pi
-       ant_angle2 = ant_angle2 - 2*pi;
-    else
-       valid = true;
-    end
+%    than r_smell.
+mask = distances<r_smell & abs(relative_angles-ant_angle) < pi/2;
+valid_pheromones = relative_pheromones(mask, :);
+valid_concentrations = concentration(mask);
+
+if isempty(valid_pheromones)
+    angle = ant_angle + normrnd(0,sigma_2);
+    return
 end
 
-x = length(relative_angles);
-valid_pheromones = zeros(x,1);
-for i = 1:size(relative_pheromones,1)
-    if distances(1,i) > r_smell
-        relative_angles(1,i) = NaN;
-        relative_pheromones(i,1) = NaN;
-        relative_pheromones(i,2) = NaN;
-        valid_pheromones(i,1) = NaN;
-    elseif relative_angles(1,i) >= ant_angle1 && relative_angles(1,i) <= ant_angle2
-        relative_angles(1,i) = NaN;
-        relative_pheromones(i,1) = NaN;
-        relative_pheromones(i,2) = NaN;
-        valid_pheromones(i,1) = NaN;
-    else
-        valid_pheromones(i,1) = i;
-    end
+valid_pheromones(:,1) = valid_pheromones(:,1) .* valid_concentrations';
+valid_pheromones(:,2) = valid_pheromones(:,2) .* valid_concentrations';
+
+m = mean(valid_pheromones,1);
+angle = mod(atan2(m(2), m(1)), 2*pi) + normrnd(0,sigma_1);
 end
-
-% If there is no effective pheromone, the angle of the ant is changed with 
-% only the normal random number controlled by sigma_2. This function then 
-% terminates and returns the angle.
-% NOTE: The procedure is the same as the one when there is no pheromone on 
-%       the map
-check = 0;
-for i = 1:length(valid_pheromones)
-    if isnan(valid_pheromones) == true
-        check = check+1;
-    else
-        break;
-    end
-    if check == length(valid_pheromones)
-        angle = ant_angle + normrnd(0,sigma_2);
-        return;
-    end
-end
-
-% (UPDATED AFTER DISCUSSION ON NOV 23 TO AVOID CONFUSION)
-% Compute the mean value of all the effective, relative pheromone positions 
-% weighted by their concentration
-
-mean = 0;
-weight = 0;
-for i=1:length(valid_pheromones)
-    if isnan(relative_angles(1,i)) == false 
-        conc = concentration(valid_pheromones(i));
-        mean = mean+relative_angles(1,i)*conc;
-        weight=weight+conc;
-    end
-end
-mean = mean/weight;
-
-% Assign the ant a new angle, factoring in noise with sigma_1
-angle = mean + normrnd(0,sigma_1);
-return;

@@ -18,6 +18,7 @@ inputs:
 
 % Compute the distance from the ant to the colony
 distance = sqrt(( x - colony_pos(1) )^2 + ( y - colony_pos(2) )^2);
+distance = min(distance);
 
 % If the distance is within the proximity threshold
 %   Return true (logical 1) for the indicator
